@@ -24,7 +24,9 @@
 	height: 100vh;
 	width: 100vw;
 	padding-top: 30vh;
-	background-image: url(https://miro.medium.com/max/875/1*XjLxTT7zSGLx7jNk-npA_Q.jpeg);
+	background-image: url('../images/background.jpeg');
+	background-color: rgba(0,0,0,0.7);
+	background-blend-mode: overlay;
 	background-size: 100vw 100vh;
 }
 
@@ -194,21 +196,23 @@ a.navbar-brand, a.btn, a.dropdown-toggle {
 }
 
 .floating {
-  animation: float 3s ease-out infinite;
+	-webkit-animation: float 3s cubic-bezier(0.215,0.61,0.355,1) alternate infinite;
+	animation: float 3s cubic-bezier(0.215,0.61,0.355,1) alternate infinite;
+	-webkit-filter: drop-shadow(3px 20px 4px rgba(0,0,0,.2));
+	filter: drop-shadow(3px 20px 4px rgba(0,0,0,.2));
 }
 
 @keyframes float {
-	0% {
-		transform: translatey(0px);
-	}
-
-	50% {
-		transform: translatey(-20px);
-	}
-
-	100% {
-		transform: translatey(0px);
-	}
+ 0% {
+  transform:translateY(0);
+  -webkit-filter:drop-shadow(3px 20px 4px rgba(0,0,0,.2));
+  filter:drop-shadow(3px 20px 4px rgba(0,0,0,.2))
+ }
+ to {
+  transform:translateY(15px);
+  -webkit-filter:drop-shadow(3px 3px 2px rgba(0,0,0,.4));
+  filter:drop-shadow(3px 3px 2px rgba(0,0,0,.4))
+ }
 }
 
 @media (min-width: 900px) {
