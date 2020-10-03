@@ -10,13 +10,24 @@
 	}
 }
 
+@font-face {
+	font-family: 'Montserrat';
+	src: url("../fonts/Montserrat.ttf")
+}
+
 :root {
 	overflow-x: hidden;
+	font-family: "Montserrat" !important;
 }
 
 ::placeholder {
 	color: white;
 	opacity: 0.8;
+	font-family: "Montserrat" !important;
+}
+
+body {
+	font-family: "Montserrat" !important;
 }
 
 #search-main {
