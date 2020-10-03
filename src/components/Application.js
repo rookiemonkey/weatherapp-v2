@@ -73,37 +73,88 @@ class Application extends Component {
                     : lightBackground
             }}>
 
-                <nav id="header">
-                    <a href="#" className="btn" onClick={this.dailyForcastTo5}>
-                        5-Day Forecast
-                    </a>
-                    <Link to="/" className="btn">
-                        City Search
-                    </Link>
-                    <a href="#" className="btn" onClick={this.dailyForcastTo7}>
-                        7-Day Forecast
-                    </a>
-                </nav>
-
                 <div
                     id="container"
                     style={{ color: this.state.darkMode ? "lightgrey" : "#F0F0F0" }}
                 >
 
+                    <nav className="navbar navbar-default">
+                        <div className="container-fluid">
+
+                            <div className="navbar-header">
+                                <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                    <span className="sr-only">Toggle navigation</span>
+                                    <span className="icon-bar"></span>
+                                    <span className="icon-bar"></span>
+                                    <span className="icon-bar"></span>
+                                </button>
+                                <a className="navbar-brand" href="#">Weather App</a>
+                            </div>
+
+
+                            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <ul className="nav navbar-nav navbar-right">
+                                    <li>
+                                        <Link to="/" className="btn">
+                                            City Search
+                                        </Link>
+                                    </li>
+                                    <li className="dropdown">
+                                        <a
+                                            href="#"
+                                            className="dropdown-toggle"
+                                            data-toggle="dropdown"
+                                            role="button"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                        >Forcast <span className="caret"></span></a>
+                                        <ul className="dropdown-menu">
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    className="btn btn-custom"
+                                                    onClick={this.dailyForcastTo5}
+                                                > 5-Day Forecast</a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    className="btn btn-custom"
+                                                    onClick={this.dailyForcastTo7}
+                                                > 7-Day Forecast</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+
                     <section id="activeDay">
-                        <h4>
+                        <h4 id="city">
                             <b>{city}</b>
                         </h4>
 
                         <div id="activeTemp">
-                            <img
-                                className='floating'
-                                id="currentIcon"
-                                src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
-                            />
+                            <div id="currentImage">
+                                <img
+                                    className='floating'
+                                    id="currentIcon"
+                                    src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+                                />
+                            </div>
 
                             <div id="currentTemp">
-                                {unit == "fahrenheit" ? currentTemp : Math.round(metric(currentTemp, "temp"))}&#176;
+                                {
+                                    unit == "fahrenheit"
+                                        ? currentTemp
+                                        : Math.round(metric(currentTemp, "temp"))
+                                } &#176;
+                                {
+                                    unit == "fahrenheit"
+                                        ? <span>f</span>
+                                        : <span>c</span>
+                                }
                             </div>
 
                             <div id="unitChange">

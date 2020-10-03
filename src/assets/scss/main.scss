@@ -48,12 +48,14 @@ main {
 	background-attachment: fixed;
 }
 
-#header {
-	@include center(row);
-	position: relative;
-	justify-content: space-evenly;
-	width: 100%;
-	height: 30px;
+.navbar.navbar-default, ul.dropdown-menu,
+li.dropdown.open, a.dropdown-toggle, a.btn.btn-custom:hover  {
+	background-color: transparent !important;
+	border: none !important;
+}
+
+a.navbar-brand, a.btn, a.dropdown-toggle {
+	color: whitesmoke !important;
 }
 
 #container {
@@ -73,19 +75,27 @@ main {
 	height: 150px;
 }
 
-#activeDay {
-	margin-top: 20px;
+#city {
 	width: 140px;
+}
+
+#activeDay {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0px auto ;
+	min-width: 140px;
 	text-align: center;
-	margin: auto;
+}
+
+#currentImage,
+#currentTemp {
+	margin: 0px 25px;
 }
 
 #activeTemp {
 	margin-top: 20px;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 	font-size: 55px;
 }
 
@@ -172,7 +182,7 @@ main {
 	background-color: rgba(0, 0, 0, 0.001);
 	outline: none !important;
 	box-shadow: none;
-	color: lightgrey;
+	color: white;
 }
 
 #disclaimer {
@@ -211,16 +221,20 @@ main {
 	#search-main {
 		background-size: 160vw 100vh;
 	}
+
 	#search-input {
 		width: 65vw;
 	}
+
 	#weekCard {
 		flex-direction: column;
 		width: 100%;
 	}
+
 	#spacer {
 		display: none;
 	}
+
 	.dayCard {
 		flex-direction: row;
 		justify-content: space-between;
@@ -229,27 +243,41 @@ main {
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
+
 	#dayCardCombiner {
 		flex-direction: row;
 		justify-content: space-between;
 		width: 100px;
 	}
+
 	.dayCard p {
 		padding-top: 10px;
 	}
+
 	#dailyIcon {
 		margin-bottom: 0px;
 	}
+
 	#temps {
 		top: 0px;
 		flex-direction: row;
 		justify-content: space-evenly;
 		width: 100px;
 	}
+
 	#bar {
 		display: none;
 	}
+
 	#hourly {
 		margin: 10px -25px 0px -25px;
+	}
+
+	#activeDay {
+		flex-direction: column;
+	}
+
+	#activeTemp {
+		flex-direction: column;
 	}
 }
