@@ -303,10 +303,17 @@ a.navbar-brand, a.btn, a.dropdown-toggle {
 
 @media (min-width: 900px) {
 	#container {
-		width: 75%;
+		width: 75%;	
 		margin: auto;
 	}
 }
+
+@media (max-width: 767px) {
+	.dropdown-toggle {
+		text-align: center !important;
+	}
+}
+
 @media (max-width: 600px) {
 	#search-main {
 		background-size: 160vw 100vh;

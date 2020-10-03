@@ -5,10 +5,10 @@ const darkBackground = "linear-gradient(#01081C, #002AA0)";
 const lightBackground = "linear-gradient(#003D8D, #88D5FE)";
 const hours = new Date().getHours();
 
-class Loader extends Component {
+class Error extends Component {
 
     render() {
-        const { dailyForcastTo5, dailyForcastTo7 } = this.props;
+        const { dailyForcastTo5, dailyForcastTo7, error } = this.props;
 
         return (
             <main style={{
@@ -24,9 +24,7 @@ class Loader extends Component {
                     />
 
                     <div className="loader-container">
-                        <div className="loader five"></div>
-                        <br />
-                        <h5>Please Wait</h5>
+                        {error}
                     </div>
 
                 </div>
@@ -35,4 +33,4 @@ class Loader extends Component {
     }
 }
 
-export default Loader;
+export default Error;

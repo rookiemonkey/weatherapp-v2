@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Navigation from './mini/Navigation';
 import Loader from './mini/Loader';
+import Error from './mini/Error';
 import metric from '../utilities/metric';
 import WeekCards from './WeekCards';
 
@@ -22,6 +23,7 @@ class Application extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            error: '',
             isLoaded: false,
             city: '',
             icon: '',
@@ -38,26 +40,37 @@ class Application extends Component {
             return this.props.history.push('/')
         }
 
-        // GECODE THE CITY QUERY
-        const query = this.props.match.params.city
-        const rawGeocode = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=AIzaSyB_oG1OC4gzj7MvBJyUVQTJqGCAoUmeCeE&libraries=places`)
-        const { results } = await rawGeocode.json();
-        const city = results[0].formatted_address;
-        const lat = results[0].geometry.location.lat;
-        const lon = results[0].geometry.location.lng;
+        try {
+            // GECODE THE CITY QUERY
+            const query = this.props.match.params.city
+            // const rawGeocode = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=AIzaSyB_oG1OC4gzj7MvBJyUVQTJqGCAoUmeCeE&libraries=places`)
+            const rawGeocode = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.REACT_APP_GOOGLEAPI}&libraries=places`)
+            const { results } = await rawGeocode.json();
+            const city = results[0].formatted_address;
+            const lat = results[0].geometry.location.lat;
+            const lon = results[0].geometry.location.lng;
 
-        // EXTRACT WEATHER DATA FROM THE GECODED ADDRESS
-        const rawWeather = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=3daff8b6e93781c1d80277bbed731195`);
-        const parsedWeather = await rawWeather.json();
-        const { daily, current } = parsedWeather;
-        this.setState({
-            isLoaded: true,
-            city,
-            daily,
-            icon: current.weather[0].icon,
-            currentTemp: JSON.stringify(Math.floor(current.temp)),
-            currentDay: days[(Math.floor((JSON.stringify(current.dt) - 18000) / 86400) + 4) % 7].id
-        })
+            // EXTRACT WEATHER DATA FROM THE GECODED ADDRESS
+            const rawWeather = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=${process.env.REACT_APP_OPENWEATHERAPI}`);
+            const parsedWeather = await rawWeather.json();
+            const { daily, current } = parsedWeather;
+            this.setState({
+                isLoaded: true,
+                city,
+                daily,
+                icon: current.weather[0].icon,
+                currentTemp: JSON.stringify(Math.floor(current.temp)),
+                currentDay: days[(Math.floor((JSON.stringify(current.dt) - 18000) / 86400) + 4) % 7].id
+            })
+        }
+
+        catch (error) {
+            this.setState({
+                ...this.state,
+                isLoaded: true,
+                error: "Something went wrong upon communicating with the APIs. Please check network tab and refresh the browser"
+            })
+        }
     }
 
     unitChange = props => {
@@ -71,9 +84,9 @@ class Application extends Component {
     dailyForcastTo7 = () => this.setState({ ...this.state, dailyForcast: 7 })
 
     render() {
-        const { city, icon, currentTemp, unit, daily, dailyForcast, isLoaded } = this.state
+        const { city, icon, currentTemp, unit, daily, dailyForcast, isLoaded, error } = this.state
 
-        if (isLoaded) {
+        if (isLoaded && !error) {
             return (
                 <main style={{
                     backgroundImage: (hours >= 20 || hours < 5)
@@ -149,10 +162,18 @@ class Application extends Component {
             )
         }
 
-        else {
+        else if (!error && !isLoaded) {
             return <Loader
                 dailyForcastTo5={this.dailyForcastTo5}
                 dailyForcastTo7={this.dailyForcastTo7}
+            />
+        }
+
+        else if (error && isLoaded) {
+            return <Error
+                dailyForcastTo5={this.dailyForcastTo5}
+                dailyForcastTo7={this.dailyForcastTo7}
+                error={error}
             />
         }
 
