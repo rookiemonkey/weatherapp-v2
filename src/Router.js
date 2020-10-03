@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import CitySearch from './components/CitySearch';
 import WeekCard from './components/WeekCard';
 import Application from './components/Application';
+import './styles/main.scss';
 
 ReactDOM.render(
 
