@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import metric from '../utilities/metric';
+import WeekCards from './WeekCards';
 
 const darkBackground = "linear-gradient(#01081C, #002AA0)";
 const lightBackground = "linear-gradient(#003D8D, #88D5FE)";
@@ -25,7 +26,8 @@ class Application extends Component {
             unit: "fahrenheit",
             currentTemp: '',
             currentDay: '',
-            daily: ''
+            daily: '',
+            dailyForcast: 7
         }
     }
 
@@ -52,18 +54,17 @@ class Application extends Component {
     }
 
     unitChange = props => {
-        props == "f" ?
-            this.setState(state => ({
-                unit: "fahrenheit"
-            })) :
-            this.setState(state => ({
-                unit: "celsius"
-            }))
+        props == "f"
+            ? this.setState({ ...this.state, unit: "fahrenheit" })
+            : this.setState({ ...this.state, unit: "celsius" })
     };
 
-    render() {
-        const { city, icon, currentTemp, unit } = this.state
+    dailyForcastTo5 = () => this.setState({ ...this.state, dailyForcast: 5 })
 
+    dailyForcastTo7 = () => this.setState({ ...this.state, dailyForcast: 7 })
+
+    render() {
+        const { city, icon, currentTemp, unit, daily, dailyForcast } = this.state
 
         return (
             <main style={{
@@ -73,15 +74,15 @@ class Application extends Component {
             }}>
 
                 <nav id="header">
-                    <Link to={{ pathname: "/week", query: { daily: 5 } }} className="btn">
+                    <a href="#" className="btn" onClick={this.dailyForcastTo5}>
                         5-Day Forecast
-                    </Link>
+                    </a>
                     <Link to="/" className="btn">
                         City Search
                     </Link>
-                    <Link to={{ pathname: "/week", query: { daily: 7 } }} className="btn">
+                    <a href="#" className="btn" onClick={this.dailyForcastTo7}>
                         7-Day Forecast
-                    </Link>
+                    </a>
                 </nav>
 
                 <div
@@ -90,10 +91,13 @@ class Application extends Component {
                 >
 
                     <section id="activeDay">
-                        <h4>{city}</h4>
+                        <h4>
+                            <b>{city}</b>
+                        </h4>
 
                         <div id="activeTemp">
                             <img
+                                className='floating'
                                 id="currentIcon"
                                 src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
                             />
@@ -119,9 +123,13 @@ class Application extends Component {
 
                     </section>
 
-                    {React.Children.map
-                        (this.props.children, child =>
-                            React.cloneElement(child, { currentTemp: this.state.currentTemp, daily: this.state.daily, unit: this.state.unit }))
+                    {
+                        dailyForcast && daily.length > 0
+                            ? <WeekCards
+                                data={daily}
+                                daily={dailyForcast}
+                            />
+                            : null
                     }
 
                 </div>

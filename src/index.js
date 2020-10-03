@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import CitySearch from './components/CitySearch';
-import WeekCard from './components/WeekCard';
+import WeekCard from './components/WeekCards';
 import Application from './components/Application';
 import './assets/vendor/bootstrap/css/bootstrap.min.css';
 import './assets/scss/main.scss';
@@ -17,8 +17,6 @@ ReactDOM.render(
         <Route exact path="/" component={CitySearch} />
 
         <Route path="/application/:city" component={Application} />
-
-        <Route exact path="/week" component={WeekCard} />
 
       </Switch>
     </BrowserRouter>

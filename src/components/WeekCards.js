@@ -1,5 +1,4 @@
-import React from 'react'
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react'
 import metric from '../utilities/metric';
 
 const days = [
@@ -12,9 +11,10 @@ const days = [
     { id: "Saturday", abb: "Sat" }];
 
 
-const WeekCard = createReactClass({
-    getInitialState() {
-        return {
+class WeekCard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             averageHigh: [],
             active: false,
             morn: 0,
@@ -22,14 +22,17 @@ const WeekCard = createReactClass({
             windSpeed: 0,
             dewPoint: 0,
             humidity: 0
-        };
-    },
+        }
+    }
 
-    render: function (props) {
-        const week = this.props.daily
-            .slice(0, this.props.location.query.daily)
-            .map(day =>
+    render() {
+        const { data, daily } = this.props
+
+        const week = data
+            .slice(0, daily)
+            .map((day, ind) =>
                 <div
+                    key={ind}
                     className="dayCard"
                     onClick={() => {
                         this.setState(state => ({
@@ -45,7 +48,8 @@ const WeekCard = createReactClass({
                         <p>{days[(Math.floor((day.dt - 18000) / 86400) + 4) % 7].abb}</p>
                         <img
                             id="dailyIcon"
-                            src={"http://openweathermap.org/img/wn/" + day.weather[0].icon + "@2x.png"} />
+                            src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+                        />
                     </div>
                     <div
                         id="spacer"
@@ -56,18 +60,28 @@ const WeekCard = createReactClass({
                                     `${(130 - day.temp.max) * 2}px` :
                                     `${(100 - day.temp.max) * 2}px` :
                                 `${(40 - day.temp.max) * 2}px`
-                        }} />
+                        }}
+                    />
                     <div id="temps">
-                        <div id="high">{
-                            this.props.unit == "fahrenheit" ?
-                                Math.round(day.temp.max) :
-                                Math.round(metric(day.temp.max, "temp"))}&#176;
-					</div>
-                        <div id="bar" style={{ height: `${(day.temp.max - day.temp.min) * 3}px` }} />
-                        <div id="low">{
-                            this.props.unit == "fahrenheit" ?
-                                Math.round(day.temp.min) :
-                                Math.round(metric(day.temp.min, "temp"))}&#176;</div>
+                        <div id="high">
+                            {
+                                this.props.unit == "fahrenheit" ?
+                                    Math.round(day.temp.max) :
+                                    Math.round(metric(day.temp.max, "temp"))
+                            } &#176;
+					    </div>
+                        <div
+                            id="bar"
+                            style={{ height: `${(day.temp.max - day.temp.min) * 3}px` }}
+                        />
+                        <div
+                            id="low">
+                            {
+                                this.props.unit == "fahrenheit" ?
+                                    Math.round(day.temp.min) :
+                                    Math.round(metric(day.temp.min, "temp"))
+                            } &#176;
+                        </div>
                     </div>
                 </div>
             );
@@ -123,6 +137,6 @@ const WeekCard = createReactClass({
             </div>
         );
     }
-});
+};
 
 export default WeekCard;
