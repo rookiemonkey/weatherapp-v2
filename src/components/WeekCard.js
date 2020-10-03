@@ -1,6 +1,18 @@
 import React from 'react'
+import createReactClass from 'create-react-class';
+import metric from '../utilities/metric';
 
-const WeekCard = React.createClass({
+const days = [
+    { id: "Sunday", abb: "Sun" },
+    { id: "Monday", abb: "Mon" },
+    { id: "Tuesday", abb: "Tues" },
+    { id: "Wednesday", abb: "Wed" },
+    { id: "Thursday", abb: "Thurs" },
+    { id: "Friday", abb: "Fri" },
+    { id: "Saturday", abb: "Sat" }];
+
+
+const WeekCard = createReactClass({
     getInitialState() {
         return {
             averageHigh: [],

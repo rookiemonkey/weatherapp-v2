@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+const PropTypes = 'prop-types';
 
 class DelayLink extends Component {
 

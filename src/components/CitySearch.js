@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import DelayLink from './mini/Link';
 
+let lat = '';
+let lon = '';
+let city = '';
+
 class CitySearch extends Component {
     constructor(props) {
         super(props);

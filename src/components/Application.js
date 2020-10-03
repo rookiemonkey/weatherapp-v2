@@ -1,8 +1,23 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import metric from '../utilities/metric';
 
 const darkBackground = "linear-gradient(#01081C, #002AA0)";
 const lightBackground = "linear-gradient(#003D8D, #88D5FE)";
+const hours = new Date().getHours();
+let lat = '';
+let lon = '';
+let city = '';
+
+const days = [
+    { id: "Sunday", abb: "Sun" },
+    { id: "Monday", abb: "Mon" },
+    { id: "Tuesday", abb: "Tues" },
+    { id: "Wednesday", abb: "Wed" },
+    { id: "Thursday", abb: "Thurs" },
+    { id: "Friday", abb: "Fri" },
+    { id: "Saturday", abb: "Sat" }];
+
 
 class Application extends Component {
     constructor(props) {

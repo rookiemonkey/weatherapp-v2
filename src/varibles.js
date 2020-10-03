@@ -1,4 +1,4 @@
-const PropTypes = 'prop-types';
+
 const darkBackground = "linear-gradient(#01081C, #002AA0)";
 const lightBackground = "linear-gradient(#003D8D, #88D5FE)";
 
