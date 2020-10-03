@@ -15,6 +15,13 @@ ReactDOM.render(
 
         <Route exact path="/" component={CitySearch} />
 
+        {/* in case there is no input */}
+        <Route
+          exact
+          path="/application"
+          render={routerProps => routerProps.history.push('/')}
+        />
+
         <Route path="/application/:city" component={Application} />
 
       </Switch>

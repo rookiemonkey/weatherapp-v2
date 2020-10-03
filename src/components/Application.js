@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import Navigation from './mini/Navigation';
+import Loader from './mini/Loader';
 import metric from '../utilities/metric';
 import WeekCards from './WeekCards';
 
@@ -21,6 +22,7 @@ class Application extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            isLoaded: false,
             city: '',
             icon: '',
             unit: "fahrenheit",
@@ -32,6 +34,10 @@ class Application extends Component {
     }
 
     async componentDidMount() {
+        if (!this.props.match.params.city) {
+            return this.props.history.push('/')
+        }
+
         // GECODE THE CITY QUERY
         const query = this.props.match.params.city
         const rawGeocode = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=AIzaSyB_oG1OC4gzj7MvBJyUVQTJqGCAoUmeCeE&libraries=places`)
@@ -45,6 +51,7 @@ class Application extends Component {
         const parsedWeather = await rawWeather.json();
         const { daily, current } = parsedWeather;
         this.setState({
+            isLoaded: true,
             city,
             daily,
             icon: current.weather[0].icon,
@@ -64,128 +71,91 @@ class Application extends Component {
     dailyForcastTo7 = () => this.setState({ ...this.state, dailyForcast: 7 })
 
     render() {
-        const { city, icon, currentTemp, unit, daily, dailyForcast } = this.state
+        const { city, icon, currentTemp, unit, daily, dailyForcast, isLoaded } = this.state
 
-        return (
-            <main style={{
-                backgroundImage: (hours >= 20 || hours < 5)
-                    ? darkBackground
-                    : lightBackground
-            }}>
+        if (isLoaded) {
+            return (
+                <main style={{
+                    backgroundImage: (hours >= 20 || hours < 5)
+                        ? darkBackground
+                        : lightBackground
+                }}>
 
-                <div
-                    id="container"
-                    style={{ color: this.state.darkMode ? "lightgrey" : "#F0F0F0" }}
-                >
+                    <div id="container" >
 
-                    <nav className="navbar navbar-default">
-                        <div className="container-fluid">
+                        <Navigation
+                            dailyForcastTo5={this.dailyForcastTo5}
+                            dailyForcastTo7={this.dailyForcastTo7}
+                        />
 
-                            <div className="navbar-header">
-                                <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                    <span className="sr-only">Toggle navigation</span>
-                                    <span className="icon-bar"></span>
-                                    <span className="icon-bar"></span>
-                                    <span className="icon-bar"></span>
-                                </button>
-                                <a className="navbar-brand" href="#">Weather App</a>
+                        <section id="activeDay">
+                            <h4 id="city">
+                                <b>{city}</b>
+                            </h4>
+
+                            <div id="activeTemp">
+                                <div id="currentImage">
+                                    <img
+                                        className='floating'
+                                        id="currentIcon"
+                                        src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+                                    />
+                                </div>
+
+                                <div id="currentTemp">
+                                    {
+                                        unit == "fahrenheit"
+                                            ? currentTemp
+                                            : Math.round(metric(currentTemp, "temp"))
+                                    }
+
+                                    &#176;
+
+                                    {
+                                        unit == "fahrenheit"
+                                            ? <span>f</span>
+                                            : <span>c</span>
+                                    }
+                                </div>
+
+                                <div id="unitChange">
+                                    <button
+                                        style={{ fontWeight: unit == "fahrenheit" ? "bold" : "400" }}
+                                        className="btn unitBtn"
+                                        onClick={() => this.unitChange("f")}
+                                    >F&#176;</button>
+
+                                    <button
+                                        style={{ fontWeight: unit == "celsius" ? "bold" : "400" }}
+                                        className="btn unitBtn"
+                                        onClick={() => this.unitChange("c")}
+                                    >C&#176;</button>
+                                </div>
                             </div>
 
+                        </section>
 
-                            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                <ul className="nav navbar-nav navbar-right">
-                                    <li>
-                                        <Link to="/" className="btn">
-                                            City Search
-                                        </Link>
-                                    </li>
-                                    <li className="dropdown">
-                                        <a
-                                            href="#"
-                                            className="dropdown-toggle"
-                                            data-toggle="dropdown"
-                                            role="button"
-                                            aria-haspopup="true"
-                                            aria-expanded="false"
-                                        >Forcast <span className="caret"></span></a>
-                                        <ul className="dropdown-menu">
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    className="btn btn-custom"
-                                                    onClick={this.dailyForcastTo5}
-                                                > 5-Day Forecast</a>
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    className="btn btn-custom"
-                                                    onClick={this.dailyForcastTo7}
-                                                > 7-Day Forecast</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-
-                    <section id="activeDay">
-                        <h4 id="city">
-                            <b>{city}</b>
-                        </h4>
-
-                        <div id="activeTemp">
-                            <div id="currentImage">
-                                <img
-                                    className='floating'
-                                    id="currentIcon"
-                                    src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+                        {
+                            dailyForcast && daily.length > 0
+                                ? <WeekCards
+                                    data={daily}
+                                    daily={dailyForcast}
                                 />
-                            </div>
+                                : null
+                        }
 
-                            <div id="currentTemp">
-                                {
-                                    unit == "fahrenheit"
-                                        ? currentTemp
-                                        : Math.round(metric(currentTemp, "temp"))
-                                } &#176;
-                                {
-                                    unit == "fahrenheit"
-                                        ? <span>f</span>
-                                        : <span>c</span>
-                                }
-                            </div>
+                    </div>
+                </main>
+            )
+        }
 
-                            <div id="unitChange">
-                                <button
-                                    style={{ fontWeight: unit == "fahrenheit" ? "bold" : "400" }}
-                                    className="btn unitBtn"
-                                    onClick={() => this.unitChange("f")}
-                                >F&#176;</button>
+        else {
+            return <Loader
+                dailyForcastTo5={this.dailyForcastTo5}
+                dailyForcastTo7={this.dailyForcastTo7}
+            />
+        }
 
-                                <button
-                                    style={{ fontWeight: unit == "celsius" ? "bold" : "400" }}
-                                    className="btn unitBtn"
-                                    onClick={() => this.unitChange("c")}
-                                >C&#176;</button>
-                            </div>
-                        </div>
-
-                    </section>
-
-                    {
-                        dailyForcast && daily.length > 0
-                            ? <WeekCards
-                                data={daily}
-                                daily={dailyForcast}
-                            />
-                            : null
-                    }
-
-                </div>
-            </main>
-        )
     }
 }
 
