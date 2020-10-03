@@ -5,9 +5,6 @@ import metric from '../utilities/metric';
 const darkBackground = "linear-gradient(#01081C, #002AA0)";
 const lightBackground = "linear-gradient(#003D8D, #88D5FE)";
 const hours = new Date().getHours();
-let lat = '';
-let lon = '';
-let city = '';
 
 const days = [
     { id: "Sunday", abb: "Sun" },
@@ -16,39 +13,45 @@ const days = [
     { id: "Wednesday", abb: "Wed" },
     { id: "Thursday", abb: "Thurs" },
     { id: "Friday", abb: "Fri" },
-    { id: "Saturday", abb: "Sat" }];
-
+    { id: "Saturday", abb: "Sat" }
+];
 
 class Application extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            city: '',
             icon: '',
             unit: "fahrenheit",
             currentTemp: '',
             currentDay: '',
             daily: ''
         }
-        this.unitChange = this.unitChange.bind(this);
     }
 
-    componentDidMount() {
-        let request = new XMLHttpRequest();
-        var API = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=imperial&exclude=minutely,hourly&appid=3daff8b6e93781c1d80277bbed731195";
-        request.open("GET", API, true);
-        request.onload = () => {
-            let APIResponse = JSON.parse(request.response);
-            this.setState(state => ({
-                daily: APIResponse.daily,
-                icon: APIResponse.current.weather[0].icon,
-                currentTemp: JSON.stringify(Math.floor(APIResponse.current.temp)),
-                currentDay: days[(Math.floor((JSON.stringify(APIResponse.current.dt) - 18000) / 86400) + 4) % 7].id
-            }));
-        }
-        request.send();
-    };
+    async componentDidMount() {
+        // GECODE THE CITY QUERY
+        const query = this.props.match.params.city
+        const rawGeocode = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=AIzaSyB_oG1OC4gzj7MvBJyUVQTJqGCAoUmeCeE&libraries=places`)
+        const { results } = await rawGeocode.json();
+        const city = results[0].formatted_address;
+        const lat = results[0].geometry.location.lat;
+        const lon = results[0].geometry.location.lng;
 
-    unitChange(props) {
+        // EXTRACT WEATHER DATA FROM THE GECODED ADDRESS
+        const rawWeather = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=3daff8b6e93781c1d80277bbed731195`);
+        const parsedWeather = await rawWeather.json();
+        const { daily, current } = parsedWeather;
+        this.setState({
+            city,
+            daily,
+            icon: current.weather[0].icon,
+            currentTemp: JSON.stringify(Math.floor(current.temp)),
+            currentDay: days[(Math.floor((JSON.stringify(current.dt) - 18000) / 86400) + 4) % 7].id
+        })
+    }
+
+    unitChange = props => {
         props == "f" ?
             this.setState(state => ({
                 unit: "fahrenheit"
@@ -59,11 +62,14 @@ class Application extends Component {
     };
 
     render() {
+        const { city, icon, currentTemp, unit } = this.state
+
+
         return (
             <main style={{
-                backgroundImage: (hours >= 20 || hours < 5) ?
-                    darkBackground :
-                    lightBackground
+                backgroundImage: (hours >= 20 || hours < 5)
+                    ? darkBackground
+                    : lightBackground
             }}>
 
                 <nav id="header">
@@ -89,22 +95,22 @@ class Application extends Component {
                         <div id="activeTemp">
                             <img
                                 id="currentIcon"
-                                style={{ width: "65px", height: "65px" }}
-                                src={"http://openweathermap.org/img/wn/" + `${this.state.icon}` + "@2x.png"} />
+                                src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+                            />
 
                             <div id="currentTemp">
-                                {this.state.unit == "fahrenheit" ? this.state.currentTemp : Math.round(metric(this.state.currentTemp, "temp"))}&#176;
+                                {unit == "fahrenheit" ? currentTemp : Math.round(metric(currentTemp, "temp"))}&#176;
                             </div>
 
                             <div id="unitChange">
                                 <button
-                                    style={{ fontWeight: this.state.unit == "fahrenheit" ? "bold" : "400" }}
+                                    style={{ fontWeight: unit == "fahrenheit" ? "bold" : "400" }}
                                     className="btn unitBtn"
                                     onClick={() => this.unitChange("f")}
                                 >F&#176;</button>
 
                                 <button
-                                    style={{ fontWeight: this.state.unit == "celsius" ? "bold" : "400" }}
+                                    style={{ fontWeight: unit == "celsius" ? "bold" : "400" }}
                                     className="btn unitBtn"
                                     onClick={() => this.unitChange("c")}
                                 >C&#176;</button>

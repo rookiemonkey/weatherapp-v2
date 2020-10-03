@@ -5,8 +5,8 @@ import * as serviceWorker from './serviceWorker';
 import CitySearch from './components/CitySearch';
 import WeekCard from './components/WeekCard';
 import Application from './components/Application';
-import './styles/bootstrap/css/bootstrap.min.css';
-import './styles/main.scss';
+import './assets/vendor/bootstrap/css/bootstrap.min.css';
+import './assets/scss/main.scss';
 
 ReactDOM.render(
 
@@ -14,11 +14,11 @@ ReactDOM.render(
     <BrowserRouter>
       <Switch>
 
-        <Route path="/" component={CitySearch} />
+        <Route exact path="/" component={CitySearch} />
 
-        <Route path="/application" component={Application} />
+        <Route path="/application/:city" component={Application} />
 
-        <Route path="/week" component={WeekCard} />
+        <Route exact path="/week" component={WeekCard} />
 
       </Switch>
     </BrowserRouter>
